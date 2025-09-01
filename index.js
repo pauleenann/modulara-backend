@@ -13,12 +13,23 @@ dotenv.config();
 
 const app = express();
 
+const allowedOrigins = [
+    "http://localhost:5173",             
+    "https://modulara.onrender.com"       
+];
+
 // connect to DB
 connectDb()
 
 app.use(express.json());
 app.use(cors({
-    origin: "*",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
 }));
 app.use(useragent.express())
