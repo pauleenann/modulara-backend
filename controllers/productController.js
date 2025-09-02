@@ -143,8 +143,14 @@ export const removeProduct = async (req, res) =>{
 
 export const getProducts = async (req, res)=>{
   try {
+    const searchQuery = req.query.search || '';
+    console.log('Search Query:', searchQuery);
+    
     const products = await Product.find(
-      {},
+      { 
+        name: { $regex: searchQuery, $options: 'i' },
+        category: { $regex: searchQuery, $options: 'i' }
+      },
       {
         _id: 1, 
         name: 1, 
@@ -156,11 +162,7 @@ export const getProducts = async (req, res)=>{
       }
     )
 
-    if(products.length==0){
-      return res.status(500).json({
-        message: 'Something wrong. No products.'
-      })
-    }
+    console.log(products)
 
     return res.status(200).json({
       products
